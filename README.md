@@ -1,13 +1,12 @@
 # Methodology-for-the-Assessment-of-Uncertainty-of-Bathymetric-data
 
-###########################################################################
-  
-  #Setting the data
+
+  # Setting the data
   setwd("D:/laura/desktop/10 periodo/Mono II/Casquinha_r0_bat_ref/MAIB/R250")
   
   getwd() 
   
-  #Packages
+  #  Packages
   pkg <- c("geoR","moments","scatterplot3d","tcltk2",
            "sp", "rgdal", "ggplot2" , "cluster" ,
            "bootstrap", "plyr", "robustbase", "MBESS", "rgeos", "gstat")
@@ -16,41 +15,40 @@
   
 
 
-  #Reading the data
+  # Reading the data
   dados <- read.table("teste.txt", header=T, dec=",")
   names(dados)
   dados
   length(dados$dz)
   
-  #Reading the data for geoestatistical analysis
+  # Reading the data for geoestatistical analysis
   dados1 <- read.geodata("teste.txt", header=T, dec=",",coords=1:2, data.col=4)
   names(dados1)
   dados1
   length(dados1$data)
   dup.coords(dados1)
   
-  ############################################################################
-  #S-44 Analysis 
-  ############################################################################
+  ## S-44 Analysis 
+ 
   
-  #Tolerance
+  # Tolerance
   esp <- sqrt((0.25^2)+((0.0075*dados$Z)^2)) #Ordem Especial
   A <- sqrt((0.50^2)+((0.013*dados$Z)^2)) #Order 1A or 1B
   B <- sqrt((1.0^2)+((0.023*dados$Z)^2)) #Order 2
   
-  #Special Order
+  # Special Order
   aux <- round(((sum (abs(dados$dz)<=esp)/length(dados$dz))*100),2)
   #Order 1A or 1B
   aux1 <- round(((sum (abs(dados$dz)<=A)/length(dados$dz))*100),2)
   #Order 2
   aux2 <- round(((sum (abs(dados$dz)<=B)/length(dados$dz))*100),2)
   
-  #Tolerance with the mean depth
+  # Tolerance with the mean depth
   esp1<- sqrt((0.25^2)+((0.0075*mean(dados$Z))^2)) 
   A1 <- sqrt((0.50^2)+((0.013*mean(dados$Z))^2)) 
   B1 <- sqrt((1.0^2)+((0.023*mean(dados$Z))^2)) 
   
-  #Exporting
+  # Exporting
   sink("Results_normam.txt", type="output", append=T)
   
   cat("#Results S-44 and NORMAM-25","\n",
@@ -71,7 +69,7 @@
   sink()
   shell.exec("Results_normam.txt")
   
-  #Plot
+  # Plot
   Ordem <- NULL
   s44 <- dados
   for(i in 1:length(dados$dz)) {
@@ -98,7 +96,7 @@
   
   s44 <- cbind(dados,Ordem)
   
-  #Plot ggplot2
+  # Plot ggplot2
   windows(8,6,title="Classificação: NORMAM-25 / S44")
   par(mfrow=c(1,1), family="serif")
   ggplot(s44, aes(x = X, y = Y, colour = Ordem)) + geom_point(size=2)+
@@ -108,7 +106,7 @@
     scale_color_manual(values = c( "2"="red","Sem Classificação" = "blue",
                                    "Especial" = "forestgreen", "1A/1B" = "black"))
   
-  #Plot
+  # Plot
   windows(8,6,title="Classification: NORMAM-25 / S44")
   par(mfrow=c(1,1), cex=1.2, family="serif")
   plot(s44$X, s44$Y, col= s44$Ordem,
@@ -118,13 +116,8 @@
          col= legenda$unique.values, pch=16,bty="o", title="Ordem")
   
   
-  ###########################################################################
-  #                             Method                                      #
-  ###########################################################################
-  
-  ###########################################################################
-  #Explonatory Analysis
-  ###########################################################################
+  ### Method                               
+  ### Explonatory Analysis
   
   (res=summary(dados1))
   
@@ -145,7 +138,7 @@
   (dist.min= round((distances.summary[1]),3))
   (dist.max= round((distances.summary[2]),3))
   
-  #Exporting
+  ## Exporting
   sink("Results.txt", type="output", append=T)
   cat("  #### Methods Proposition ####","\n",
       "------------------------------------------------------","\n",
@@ -167,10 +160,9 @@
   sink()
   shell.exec("Results.txt")
   
-  ###########################################################################
-  #Explonatory Analysis - Graphs
-  ###########################################################################
-  
+ 
+  ## Explonatory Analysis - Graphs
+ 
   windows(8,6,title="Gráficos para análise exploratória")
   par(mfrow=c(2,2), family="serif")
   
@@ -190,9 +182,9 @@
   boxplot(dados$dz, xlab="dZ", ylab= "Discrepancies (m)", main="Boxplot (Tukey)")
   par(mfrow=c(1,1) ,family="serif")
   
-  ############################################################################
-  #Spatial Explonatory Analysis 
-  ###########################################################################
+
+  ## Spatial Explonatory Analysis 
+ 
   
   windows(8,6,canvas="snow2",title="Depth")
   ggplot(dados, aes(x = X, y = Y, colour = dz)) + geom_point()+
