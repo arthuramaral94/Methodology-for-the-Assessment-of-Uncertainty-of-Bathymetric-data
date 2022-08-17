@@ -22,7 +22,7 @@
   dados
   length(dados$dz)
   
-  #reading the data for geoestatistical analysis
+  #Reading the data for geoestatistical analysis
   dados1 <- read.geodata("teste.txt", header=T, dec=",",coords=1:2, data.col=4)
   names(dados1)
   dados1
@@ -30,32 +30,30 @@
   dup.coords(dados1)
   
   ############################################################################
-  #An?lise NORMAM-25 / S-44
-  #Estimativa da Toler?ncia NORMAM-25 / S-44 --> Profundidade M?dia
+  #S-44 Analysis 
   ############################################################################
   
-  #C?lculo da toler?ncia
+  #Tolerance
   esp <- sqrt((0.25^2)+((0.0075*dados$Z)^2)) #Ordem Especial
-  A <- sqrt((0.50^2)+((0.013*dados$Z)^2)) #Ordem 1A e Ordem 1B
-  B <- sqrt((1.0^2)+((0.023*dados$Z)^2)) #Ordem 2
+  A <- sqrt((0.50^2)+((0.013*dados$Z)^2)) #Order 1A or 1B
+  B <- sqrt((1.0^2)+((0.023*dados$Z)^2)) #Order 2
   
-  #Ordem Especial
+  #Special Order
   aux <- round(((sum (abs(dados$dz)<=esp)/length(dados$dz))*100),2)
-  #Ordem 1A ou 1B
+  #Order 1A or 1B
   aux1 <- round(((sum (abs(dados$dz)<=A)/length(dados$dz))*100),2)
-  #Ordem 2
+  #Order 2
   aux2 <- round(((sum (abs(dados$dz)<=B)/length(dados$dz))*100),2)
   
-  #c?lculo da toler?ncia usando a profundidade m?dia
-  esp1<- sqrt((0.25^2)+((0.0075*mean(dados$Z))^2)) #Ordem Especial
-  A1 <- sqrt((0.50^2)+((0.013*mean(dados$Z))^2)) #Ordem 1A e Ordem 1B
-  B1 <- sqrt((1.0^2)+((0.023*mean(dados$Z))^2)) #Ordem 2
+  #Tolerance with the mean depth
+  esp1<- sqrt((0.25^2)+((0.0075*mean(dados$Z))^2)) 
+  A1 <- sqrt((0.50^2)+((0.013*mean(dados$Z))^2)) 
+  B1 <- sqrt((1.0^2)+((0.023*mean(dados$Z))^2)) 
   
-  #Exportando informa??es:
-  sink("Resultados_normam.txt", type="output", append=T)
+  #Exporting
+  sink("Results_normam.txt", type="output", append=T)
   
-  cat("##### Tese de doutorado #####\n Prof. ?talo O. Ferreira\n italo.ferreira@ufv.br\n\n MAIB - Metodologia para Avalia??o da Incerteza de dados Batim?tricos
-      \n Avalia??o NORMAM-25 / S-44:","\n",
+  cat("#Results S-44 and NORMAM-25","\n",
       "------------------------------------------------------","\n",
       "Ordem Especial: "         ,aux ,"%"   ,"\n",
       "Ordem 1A/1B:"             ,aux1,"%"  ,"\n",
@@ -71,16 +69,16 @@
       "------------------------------------------------------","\n",
       fill=F)
   sink()
-  shell.exec("Resultados_normam.txt")
+  shell.exec("Results_normam.txt")
   
-  #Plotando an?lise de acordo com a NORMAM-25/S44  
+  #Plot
   Ordem <- NULL
   s44 <- dados
   for(i in 1:length(dados$dz)) {
     
     if (s44$dz [i] >= -1*esp1 & s44$dz [i] <= esp1){
       
-      Ordem[i] <- "Especial"
+      Ordem[i] <- "Special"
       
     }
     
@@ -94,24 +92,24 @@
       Ordem[i] <- "2"
     } 
     
-    else { Ordem [i] <- "Sem Classificação"}
+    else { Ordem [i] <- "No Classification"}
     
   }
   
   s44 <- cbind(dados,Ordem)
   
-  #Plotando via ggplot2
+  #Plot ggplot2
   windows(8,6,title="Classificação: NORMAM-25 / S44")
   par(mfrow=c(1,1), family="serif")
   ggplot(s44, aes(x = X, y = Y, colour = Ordem)) + geom_point(size=2)+
-    labs(title= "Classificação: NORMAM-25 / S-44", x= "E (m)", y= "N (m)") +
+    labs(title= "Classification: NORMAM-25 / S-44", x= "E (m)", y= "N (m)") +
     theme_bw()+theme(plot.title = element_text(hjust = 0.5, size = 16))+
     theme(legend.title = element_text(size=14, face="bold"))+
     scale_color_manual(values = c( "2"="red","Sem Classificação" = "blue",
                                    "Especial" = "forestgreen", "1A/1B" = "black"))
   
-  #Plotando usando plot
-  windows(8,6,title="Classifica??o: NORMAM-25 / S44")
+  #Plot
+  windows(8,6,title="Classification: NORMAM-25 / S44")
   par(mfrow=c(1,1), cex=1.2, family="serif")
   plot(s44$X, s44$Y, col= s44$Ordem,
        xlab=" E (m)", ylab="N (m)", main="Classificação: NORMAM-25 / S-44",pch=16)
@@ -121,11 +119,11 @@
   
   
   ###########################################################################
-  #                         Proposi??o do M?todo                            #
+  #                             Method                                      #
   ###########################################################################
   
   ###########################################################################
-  #An?lise explorat?ria dos dados de discrep?ncias
+  #Explonatory Analysis
   ###########################################################################
   
   (res=summary(dados1))
@@ -133,7 +131,7 @@
 
   attach(res)
   
-  #Principais medidas
+  #Measures
   (med = round(mean(dados$dz),3))
   (min = round(min(dados$dz),3))
   (max = round(max(dados$dz),3))
@@ -147,11 +145,11 @@
   (dist.min= round((distances.summary[1]),3))
   (dist.max= round((distances.summary[2]),3))
   
-  #Exportando informa??es:
-  sink("Resultados.txt", type="output", append=T)
-  cat("  #### Proposi??o do M?todo ####","\n",
+  #Exporting
+  sink("Results.txt", type="output", append=T)
+  cat("  #### Methods Proposition ####","\n",
       "------------------------------------------------------","\n",
-      " An?lise Explorat?ria dos Dados:","\n",
+      " Explonatory Analysis:","\n",
       "------------------------------------------------------","\n",
       n, "observa??es"    ,"\n",
       "M?dia:"      ,med,'metros'  ,"\n",
@@ -167,44 +165,44 @@
       "------------------------------------------------------","\n",
       fill=F)
   sink()
-  shell.exec("Resultados.txt")
+  shell.exec("Results.txt")
   
   ###########################################################################
-  #Gr?ficos para an?lise explorat?ria
+  #Explonatory Analysis - Graphs
   ###########################################################################
   
   windows(8,6,title="Gráficos para análise exploratória")
   par(mfrow=c(2,2), family="serif")
   
-  hist(dados$dz, xlab="Discrepâncias (m)", ylab= "Frequência", main=" Histograma")
+  hist(dados$dz, xlab="Discrepancies (m)", ylab= "Frequency", main=" Histogram")
   rug(jitter(dados$dz))
-  plot(density(dados$dz), xlab="Discrepâncias (m)", ylab= "Frequência", main=" Densidade")
-  boxplot(dados$dz, xlab="dZ", ylab= "Discrepâncias (m)", main="Boxplot (Tukey)")
+  plot(density(dados$dz), xlab="Discrepancies (m)", ylab= "Frequency", main=" Density")
+  boxplot(dados$dz, xlab="dZ", ylab= "Discrepancies (m)", main="Boxplot (Tukey)")
   qqnorm(dados$dz, xlab="Quantis Teóricos", ylab= "Quantis Amostrados", main=" Normal Q-Q Plot")
   qqline(dados$dz,lty=2, col='red')
   par(mfrow=c(1,1), family="serif")
   
 
-  #Boxplot Ajustado
-  windows(8,6,title="Gráficos para análise exploratória")
+  #Boxplot Ajusted
+  windows(8,6,title="Explonatory Analysis - Graphs")
   par(mfrow=c(1,2), family="serif")
-  adjbox(dados$dz, xlab="dZ", ylab= "Discrepâncias (m)", main="Boxplot Ajustado")
-  boxplot(dados$dz, xlab="dZ", ylab= "Discrepâncias (m)", main="Boxplot (Tukey)")
+  adjbox(dados$dz, xlab="dZ", ylab= "Discrepancies (m)", main="Boxplot Ajusted")
+  boxplot(dados$dz, xlab="dZ", ylab= "Discrepancies (m)", main="Boxplot (Tukey)")
   par(mfrow=c(1,1) ,family="serif")
   
   ############################################################################
-  #An?lise Explorat?ria Espacial
+  #Spatial Explonatory Analysis 
   ###########################################################################
   
-  windows(8,6,canvas="snow2",title="Batimetria por resposta espectral")
+  windows(8,6,canvas="snow2",title="Depth")
   ggplot(dados, aes(x = X, y = Y, colour = dz)) + geom_point()+
-    xlab("E (m)") + ylab("N (m)") + ggtitle("Área de Estudo") +
+    xlab("E (m)") + ylab("N (m)") + ggtitle("Study Area") +
     theme_bw()+theme(plot.title = element_text(hjust = 0.5))
   
-  windows(8,6,title="Batimetria por resposta espectral")
-  scatterplot3d(dados$X,dados$Y,dados$dz,xlab=" E (m)", ylab="N (m)", zlab="Batimetria por resposta espectral (m)", main="Área de Estudo")
+  windows(8,6,title="MAIB")
+  scatterplot3d(dados$X,dados$Y,dados$dz,xlab=" E (m)", ylab="N (m)", zlab="Depth (m)", main="Study Area")
   
-  windows(8,6,title="Gr?ficos para análise exploratória")
+  windows(8,6,title="Explonatory Analysis - Graphs")
   par(mfrow=c(2,2), family="serif")
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="equal")
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="data.proportional")
@@ -212,58 +210,57 @@
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="deciles")
   par(mfrow=c(1,1), family="serif")
   
-  windows(8,6,title="Gráficos para análise exploratória")
+  windows(8,6,title="Explonatory Analysis - Graphs")
   par(mfrow=c(1,1), family="serif")
-  points(dados1,xlab="E (m)",ylab="N (m)",pt.divide="quartiles", main="Gráfico de Quartis")
+  points(dados1,xlab="E (m)",ylab="N (m)",pt.divide="quartiles", main="Quartis Graphs")
   
   ######################################################################
-  #An?lise de tend?ncia
+  #Trend analysis
   ######################################################################
   
-  windows(8,6,title="Gráficos para análise de Tendência")
+  windows(8,6,title="Graphs for trend")
   par(mfrow=c(1,1), family="serif")
-  plot(dados1,low=T) #Com linha de tend?ncia
-  
+
   ######################################################################
-  #Detec??o de outliers para dados (aproximadamente) sim?tricos/normais
+  #Outliers detection for normal data
   ######################################################################
 
   #Boxplot de Tukey
   out.box <- boxplot.stats(dados$dz)
   
-  #Isola os outliers detectados pelo boxplot de Tukey
+  #Isolates outliers detected by Tukey's boxplot
   result <- dados[-which(dados$dz<out.box$stats[1] | dados$dz>out.box$stats[5]),]
   
-  #Z-Score Modificado
+  #Z-Score Modificated
   ZSM <- abs((0.6745*(dados$dz-median(dados$dz)))/(mad(dados$dz,constant = 1)))  
   
-  #Isola os outliers detectados pelo z score modificado
+  #Isolates outliers detected by Z-Score Modificated
   result1 <- dados[-which(ZSM>3),]
   
   ######################################################################
-  #Detec??o de outliers para dados assim?tricos
+  #Outliers detection for assimetric data
   ######################################################################
   
-  #adjbox(dados$dz, xlab="dZ", ylab= "Discrep?ncias (m)", main="Boxplot Ajustado")
+  #adjbox(dados$dz, xlab="dZ", ylab= "Discrepancies (m)", main="Boxplot Ajusted")
   out.box1 <- adjboxStats(dados$dz)
  
   #isola os outliers detectados pelo boxplot ajustado
   result.box.ajust <- dados[-which(dados$dz<out.box1$stats[1] | dados$dz>out.box1$stats[5]),]
   
-  #Exportando informa??es:
-  sink("Resultados.txt", type="output", append=T)
+  #Exporting information
+  sink("Results.txt", type="output", append=T)
   
-  cat(" Detec??o de Outliers","\n",
+  cat(" Outlier detection","\n",
       "------------------------------------------------------","\n",
       "Boxplot (Tukey): "         ,out.box$out,"\n\n",
-      "Boxplot Ajustado: "         ,out.box1$out,"\n\n",
-      "Z-Score Modificado: "         ,dados$dz[which(ZSM>3)]   ,"\n\n",
+      "Boxplot Ajusted: "         ,out.box1$out,"\n\n",
+      "Z-Score Modificated: "         ,dados$dz[which(ZSM>3)]   ,"\n\n",
       "------------------------------------------------------","\n",
       fill=F)
   sink()
-  shell.exec("Resultados.txt")
+  shell.exec("Results.txt")
   
-  #Gera arquivo com dados sem outliers
+  #Data without Outilier
   
   write.table(result, "dados_semout_boxplot.txt", dec=",")
   
@@ -272,16 +269,16 @@
   write.table(result.box.ajust, "dados_semout_boxplot_ajustado.txt", dec=",")
 
   ######################################################################
-  ############### Escolher arquivo sem outliers ########################
+  ############### data without outliers ########################
   ######################################################################
   
-  #Leitura dos dados
+  #Reading
   dados <- read.table("dados_semout_boxplot.txt", header=T, dec=",")
   names(dados)
   dados
   length(dados$dz)
   
-  #Leitura dos dados para an?lise Geoestat?stica
+  #Reading the data for geoestatistical analysis
   dados1 <- read.geodata("dados_semout_boxplot.txt", header=T, dec=",",coords=1:2, data.col=4)
   names(dados1)
   dados1
@@ -289,13 +286,13 @@
   dup.coords(dados1)
   
   ###########################################################################
-  #An?lise explorat?ria dos dados de discrep?ncias
+  #Exploratory Analysis
   ###########################################################################
   (res=summary(dados1))
   
   attach(res)
   
-  #Principais medidas
+  #Mean measures
   (med = round(mean(dados$dz),3))
   (min = round(min(dados$dz),3))
   (max = round(max(dados$dz),3))
@@ -309,8 +306,8 @@
   (dist.min= round((distances.summary[1]),3))
   (dist.max= round((distances.summary[2]),3))
   
-  #Exportando informa??es:
-  sink("Resultados.txt", type="output", append=T)
+  #Exporting information
+  sink("Results.txt", type="output", append=T)
   cat("  #### Dados sem Outliers ####","\n",
       "------------------------------------------------------","\n",
       " An?lise Explorat?ria dos Dados:","\n",
@@ -329,44 +326,44 @@
       "------------------------------------------------------","\n",
       fill=F)
   sink()
-  shell.exec("Resultados.txt")
+  shell.exec("Results.txt")
   
   ###########################################################################
-  #Gr?ficos para an?lise explorat?ria
+  #Exploratory Analysis - Graphs
   ###########################################################################
   
   
-  windows(8,4,title="Gráficos para análise exploratória")
+  windows(8,4,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,3), family="serif")
-  hist(dados$dz, xlab="Batimetria Espectral (m)", ylab= "Frequência", main=" Histograma")
+  hist(dados$dz, xlab="Depth (m)", ylab= "Frequency", main=" Histogram")
   rug(jitter(dados$dz))
-  plot(density(dados$dz), xlab="Batimetria Espectral (m)", ylab= "Frequência", main=" Densidade")
+  plot(density(dados$dz), xlab="Batimetria Espectral (m)", ylab= "Frequency", main=" Density")
   qqnorm(dados$dz, xlab="Quantis Teóricos", ylab= "Quantis Amostrados", main=" Normal Q-Q Plot")
   qqline(dados$dz,lty=2, col='red')
   par(mfrow=c(1,1), family="serif")
   
   
-  windows(8,6,title="Gráficos para análise exploratória")
+  windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,2), family="serif")
-  adjbox(dados$dz, xlab="dZ", ylab= "Batimetria Espectral (m)", main="Boxplot Ajustado")
-  boxplot(dados$dz, xlab="dZ", ylab= "Batimetria Espectral (m)", main="Boxplot (Tukey)")
+  adjbox(dados$dz, xlab="dZ", ylab= "Depth (m)", main="Boxplot Ajustado")
+  boxplot(dados$dz, xlab="dZ", ylab= "Depth (m)", main="Boxplot (Tukey)")
   par(mfrow=c(1,1), family="serif")
   
   
   ############################################################################
-  #An?lise Explorat?ria Espacial
+  #Spatial Exploratory Analysis
   ###########################################################################
   
-  windows(8,6,canvas="snow2",title="Batimetria Espectral")
+  windows(8,6,canvas="snow2",title="Depth")
   ggplot(dados, aes(x = X, y = Y, colour = dz)) + geom_point()+
-    xlab("E (m)") + ylab("N (m)") + ggtitle("Área de Estudo") +
+    xlab("E (m)") + ylab("N (m)") + ggtitle("Study Area") +
     theme_bw()+theme(plot.title = element_text(hjust = 0.5))
   
-  windows(8,6,title="Discrepâncias")
-  scatterplot3d(dados$X,dados$Y,dados$dz,xlab=" E (m)", ylab="N (m)", zlab="Batimetria Espectral (m)", main="Área de Estudo")
+  windows(8,6,title="Discrepancies")
+  scatterplot3d(dados$X,dados$Y,dados$dz,xlab=" E (m)", ylab="N (m)", zlab=" Depth (m)", main="Study Area")
   
   
-  windows(8,6,title="Gráficos para análise exploratória")
+  windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(2,2), family="serif")
     #Visualiza??o
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="equal")
@@ -375,25 +372,25 @@
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="deciles")
   par(mfrow=c(1,1), family="serif")
   
-  windows(8,6,title="Gráficos para análise exploratória")
+  windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,1), family="serif")
   points(dados1,xlab="E (m)",ylab="N (m)", 
          pt.divide="quartiles", main="Gráfico de Quartis")
   
   ######################################################################
-  #An?lise de tend?ncia
+  #Tedency Analysis
   ######################################################################
   
-  windows(8,6,title="Gráficos para análise exploratória")
+  windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,1), family="serif")
-  plot(dados1,low=T) #Com linha de tend?ncia
+  plot(dados1,low=T) 
   
   
   ###########################################################################
-  #An?lise de Independ?ncia (semivariograna)
+  #Independence Analysis (semivariogram)
   ###########################################################################
   
-  #Semivariograma emp?rico 
+  #Empiric Semivariogram 
   
   #Constru??o de 4 semivariogramas:
   #1? com alcance igual a 100% da dist?ncia m?xima
