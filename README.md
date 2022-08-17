@@ -28,7 +28,7 @@
   length(dados1$data)
   dup.coords(dados1)
   
-  ## S-44 Analysis 
+  # S-44 Analysis 
  
   
   # Tolerance
@@ -116,15 +116,15 @@
          col= legenda$unique.values, pch=16,bty="o", title="Ordem")
   
   
-  ### Method                               
-  ### Explonatory Analysis
+  # Method                               
+  ## Explonatory Analysis
   
   (res=summary(dados1))
   
 
   attach(res)
   
-  #Measures
+  ## Measures
   (med = round(mean(dados$dz),3))
   (min = round(min(dados$dz),3))
   (max = round(max(dados$dz),3))
@@ -140,19 +140,19 @@
   
   ## Exporting
   sink("Results.txt", type="output", append=T)
-  cat("  #### Methods Proposition ####","\n",
+  cat(" Methods Proposition ","\n",
       "------------------------------------------------------","\n",
       " Explonatory Analysis:","\n",
       "------------------------------------------------------","\n",
       n, "observa??es"    ,"\n",
-      "M?dia:"      ,med,'metros'  ,"\n",
-      "M?nimo:"  ,min,"metros"  ,"\n",
-      "M?ximo:"     ,max,"metros"  ,"\n",
-      "Vari?ncia:"  ,var,"metros?"  ,"\n",
-      "Desvio Padr?o:"     ,des,"metros"  ,"\n",
+      "Mean:"      ,med,'metros'  ,"\n",
+      "Min:"  ,min,"metros"  ,"\n",
+      "Max:"     ,max,"metros"  ,"\n",
+      "Var:"  ,var,"metros?"  ,"\n",
+      "Standard Deviation:"     ,des,"metros"  ,"\n",
       "CV:"         ,CV,"%"  ,"\n",
-      "Coef. de Curtose: "         ,curt    ,"\n",
-      "Coef. de Assimetria:"      ,assim  ,"\n",
+      "Curtosis: "         ,curt    ,"\n",
+      "Assimetry:"      ,assim  ,"\n",
       "dist.min.:"  ,dist.min,"metros"  ,"\n",
       "dist.max.:" ,dist.max,"metros" ,"\n",
       "------------------------------------------------------","\n",
@@ -163,7 +163,7 @@
  
   ## Explonatory Analysis - Graphs
  
-  windows(8,6,title="Gráficos para análise exploratória")
+  windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(2,2), family="serif")
   
   hist(dados$dz, xlab="Discrepancies (m)", ylab= "Frequency", main=" Histogram")
@@ -175,7 +175,7 @@
   par(mfrow=c(1,1), family="serif")
   
 
-  #Boxplot Ajusted
+  ## Boxplot Ajusted
   windows(8,6,title="Explonatory Analysis - Graphs")
   par(mfrow=c(1,2), family="serif")
   adjbox(dados$dz, xlab="dZ", ylab= "Discrepancies (m)", main="Boxplot Ajusted")
@@ -183,7 +183,7 @@
   par(mfrow=c(1,1) ,family="serif")
   
 
-  ## Spatial Explonatory Analysis 
+  ## Spatial Exploratory Analysis 
  
   
   windows(8,6,canvas="snow2",title="Depth")
@@ -194,7 +194,7 @@
   windows(8,6,title="MAIB")
   scatterplot3d(dados$X,dados$Y,dados$dz,xlab=" E (m)", ylab="N (m)", zlab="Depth (m)", main="Study Area")
   
-  windows(8,6,title="Explonatory Analysis - Graphs")
+  windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(2,2), family="serif")
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="equal")
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="data.proportional")
@@ -202,44 +202,35 @@
   points(dados1,xlab="E (m)",ylab="N (m)", pt.divide="deciles")
   par(mfrow=c(1,1), family="serif")
   
-  windows(8,6,title="Explonatory Analysis - Graphs")
+  windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,1), family="serif")
   points(dados1,xlab="E (m)",ylab="N (m)",pt.divide="quartiles", main="Quartis Graphs")
   
-  ######################################################################
-  #Trend analysis
-  ######################################################################
-  
+  ## Trend analysis
+   
   windows(8,6,title="Graphs for trend")
   par(mfrow=c(1,1), family="serif")
 
-  ######################################################################
-  #Outliers detection for normal data
-  ######################################################################
-
-  #Boxplot de Tukey
+  ## Outliers detection for normal data
+  ## Boxplot de Tukey
   out.box <- boxplot.stats(dados$dz)
   
-  #Isolates outliers detected by Tukey's boxplot
+  ## Isolates outliers detected by Tukey's boxplot
   result <- dados[-which(dados$dz<out.box$stats[1] | dados$dz>out.box$stats[5]),]
   
-  #Z-Score Modificated
+  ## Z-Score Modificated
   ZSM <- abs((0.6745*(dados$dz-median(dados$dz)))/(mad(dados$dz,constant = 1)))  
   
-  #Isolates outliers detected by Z-Score Modificated
+  ## Isolates outliers detected by Z-Score Modificated
   result1 <- dados[-which(ZSM>3),]
   
-  ######################################################################
-  #Outliers detection for assimetric data
-  ######################################################################
+  ## Outliers detection for assimetric data
   
-  #adjbox(dados$dz, xlab="dZ", ylab= "Discrepancies (m)", main="Boxplot Ajusted")
-  out.box1 <- adjboxStats(dados$dz)
- 
-  #isola os outliers detectados pelo boxplot ajustado
+
+  ## Outliers isolated detect by Boxplot ajusted
   result.box.ajust <- dados[-which(dados$dz<out.box1$stats[1] | dados$dz>out.box1$stats[5]),]
   
-  #Exporting information
+  ## Exporting information
   sink("Results.txt", type="output", append=T)
   
   cat(" Outlier detection","\n",
@@ -252,7 +243,7 @@
   sink()
   shell.exec("Results.txt")
   
-  #Data without Outilier
+  ## Data without Outilier
   
   write.table(result, "dados_semout_boxplot.txt", dec=",")
   
@@ -260,31 +251,29 @@
   
   write.table(result.box.ajust, "dados_semout_boxplot_ajustado.txt", dec=",")
 
-  ######################################################################
-  ############### data without outliers ########################
-  ######################################################################
+  ## Data without outliers 
+ 
   
-  #Reading
+  ## Reading
   dados <- read.table("dados_semout_boxplot.txt", header=T, dec=",")
   names(dados)
   dados
   length(dados$dz)
   
-  #Reading the data for geoestatistical analysis
-  dados1 <- read.geodata("dados_semout_boxplot.txt", header=T, dec=",",coords=1:2, data.col=4)
+  ## Reading the data for geoestatistical analysis
+  dados1 <- read.geodata("dados_without_out_boxplot.txt", header=T, dec=",",coords=1:2, data.col=4)
   names(dados1)
   dados1
   length(dados1$data)
   dup.coords(dados1)
   
-  ###########################################################################
-  #Exploratory Analysis
-  ###########################################################################
+  ## Exploratory Analysis
+ 
   (res=summary(dados1))
   
   attach(res)
   
-  #Mean measures
+  ## Mean measures
   (med = round(mean(dados$dz),3))
   (min = round(min(dados$dz),3))
   (max = round(max(dados$dz),3))
@@ -298,21 +287,21 @@
   (dist.min= round((distances.summary[1]),3))
   (dist.max= round((distances.summary[2]),3))
   
-  #Exporting information
+  ## Exporting information
   sink("Results.txt", type="output", append=T)
-  cat("  #### Dados sem Outliers ####","\n",
+  cat(" Data without Outliers ","\n",
       "------------------------------------------------------","\n",
-      " An?lise Explorat?ria dos Dados:","\n",
+      " Exploratory Analysis:","\n",
       "------------------------------------------------------","\n",
       n, "observa??es"    ,"\n",
-      "M?dia:"      ,med,'metros'  ,"\n",
-      "M?nimo:"  ,min,"metros"  ,"\n",
-      "M?ximo:"     ,max,"metros"  ,"\n",
-      "Vari?ncia:"  ,var,"metros?"  ,"\n",
-      "Desvio Padr?o:"     ,des,"metros"  ,"\n",
+      "Mean:"      ,med,'metros'  ,"\n",
+      "Min:"  ,min,"metros"  ,"\n",
+      "Max:"     ,max,"metros"  ,"\n",
+      "Var:"  ,var,"metros?"  ,"\n",
+      "Standard Deviation:"     ,des,"metros"  ,"\n",
       "CV:"         ,CV,"%"  ,"\n",
-      "Coef. de Curtose: "         ,curt    ,"\n",
-      "Coef. de Assimetria:"      ,assim  ,"\n",
+      "Curtosis: "         ,curt    ,"\n",
+      "Assimetry:"      ,assim  ,"\n",
       "dist.min:"  ,dist.min,"metros"  ,"\n",
       "dist.max:" ,dist.max,"metros" ,"\n",
       "------------------------------------------------------","\n",
@@ -320,10 +309,7 @@
   sink()
   shell.exec("Results.txt")
   
-  ###########################################################################
-  #Exploratory Analysis - Graphs
-  ###########################################################################
-  
+  ## Exploratory Analysis - Graphs
   
   windows(8,4,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,3), family="serif")
@@ -342,9 +328,8 @@
   par(mfrow=c(1,1), family="serif")
   
   
-  ############################################################################
-  #Spatial Exploratory Analysis
-  ###########################################################################
+  ## Spatial Exploratory Analysis
+ 
   
   windows(8,6,canvas="snow2",title="Depth")
   ggplot(dados, aes(x = X, y = Y, colour = dz)) + geom_point()+
@@ -367,24 +352,22 @@
   windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,1), family="serif")
   points(dados1,xlab="E (m)",ylab="N (m)", 
-         pt.divide="quartiles", main="Gráfico de Quartis")
+         pt.divide="quartiles", main="Quartis Graphs")
   
-  ######################################################################
-  #Tedency Analysis
-  ######################################################################
+  ## Trend Analysis
+  
   
   windows(8,6,title="Exploratory Analysis - Graphs")
   par(mfrow=c(1,1), family="serif")
   plot(dados1,low=T) 
   
   
-  ###########################################################################
-  #Independence Analysis (semivariogram)
-  ###########################################################################
+ 
+  ## Independence Analysis (semivariogram)
+   
+  ## Empiric Semivariogram 
   
-  #Empiric Semivariogram 
-  
-  #Constru??o de 4 semivariogramas:
+  ### 4 semivariograms:
   #1? com alcance igual a 100% da dist?ncia m?xima
   #2? com alcance igual a 75% da dist?ncia m?xima
   #3? com alcance igual a 50% da dist?ncia m?xima
