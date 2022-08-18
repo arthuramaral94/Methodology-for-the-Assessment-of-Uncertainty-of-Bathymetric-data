@@ -2,7 +2,7 @@
 
 
   # Setting the data
-  setwd("D:/laura/desktop/10 periodo/Mono II/Casquinha_r0_bat_ref/MAIB/R250")
+  setwd("It's necessary to set the diretory here")
   
   getwd() 
   
@@ -245,17 +245,17 @@
   
   ## Data without Outilier
   
-  write.table(result, "dados_semout_boxplot.txt", dec=",")
+  write.table(results, "dados_without_out_boxplot.txt", dec=",")
   
-  write.table(result1, "dados_semout_ZSM.txt", dec=",")
+  write.table(result1, "dados_without__out_ZSM.txt", dec=",")
   
-  write.table(result.box.ajust, "dados_semout_boxplot_ajustado.txt", dec=",")
+  write.table(result.box.ajust, "dados_without_out_boxplot_ajustado.txt", dec=",")
 
   ## Data without outliers 
  
   
   ## Reading
-  dados <- read.table("dados_semout_boxplot.txt", header=T, dec=",")
+  dados <- read.table("dados_without_out_boxplot.txt", header=T, dec=",")
   names(dados)
   dados
   length(dados$dz)
@@ -368,34 +368,34 @@
   ## Empiric Semivariogram 
   
   ### 4 semivariograms:
-  #1? com alcance igual a 100% da dist?ncia m?xima
-  #2? com alcance igual a 75% da dist?ncia m?xima
-  #3? com alcance igual a 50% da dist?ncia m?xima
-  #4? com alcance igual a 25% da dist?ncia m?xima
+  #1 - with range of 100% of the max distance
+  #2 - with range of 75% of the max distance
+  #3 - with range of 50% of the max distance
+  #4 - with range of 25% of the max distance
   
   windows(8,6,title="Semivariograma Omnidirecional")
   escala.y=2*var
   
   par(mfrow=c(2,2), family="serif")
   vario.emp.1 <- variog(dados1,max.dist=(dist.max), direction="omnidirectional")
-  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("100% da Distância Máxima"))
+  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distances (m)",ylab="Semivariances (m)", main=("100% of the max distance"))
   abline(var(dados1$data),0, col="gray60", lty=2, lwd=2)
-  legend("topleft","Variância Amostral", col="gray60",lty=2, lwd=2,bty='n')
+  legend("topleft","Amostral Variance", col="gray60",lty=2, lwd=2,bty='n')
   
   vario.emp.1 <- variog(dados1,max.dist=(0.75*dist.max), direction="omnidirectional")
-  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("75% da Distância Máxima"))
+  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariances (m)", main=("75% of the max distance"))
   abline(var(dados1$data),0, col="gray60", lty=2, lwd=2)
-  legend("topleft","Variância Amostrall", col="gray60",lty=2, lwd=2,bty='n')
+  legend("topleft","Amostral Variance", col="gray60",lty=2, lwd=2,bty='n')
   
   vario.emp.1 <- variog(dados1,max.dist=(0.50*dist.max), direction="omnidirectional")
-  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("50% da Distância Máxima"))
+  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("50% of the max distance"))
   abline(var(dados1$data),0, col="gray60", lty=2, lwd=2)
-  legend("topleft","Variância Amostral", col="gray60",lty=2, lwd=2,bty='n')
+  legend("topleft","Amostral Variance", col="gray60",lty=2, lwd=2,bty='n')
   
   vario.emp.1 <- variog(dados1,max.dist=(0.25*dist.max), direction="omnidirectional")
-  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("25% da Distância Máxima"))
+  plot(vario.emp.1,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("25% of the max distance"))
   abline(var(dados1$data),0, col="gray60", lty=2, lwd=2)
-  legend("topleft","Variância Amostral", col="gray60",lty=2, lwd=2,bty='n')
+  legend("topleft","Amostral Variance", col="gray60",lty=2, lwd=2,bty='n')
   par(mfrow=c(1,1), family="serif")
   
   dist.max
@@ -403,67 +403,60 @@
   0.50*dist.max
   0.25*dist.max
   
-  ########################################################################
-  #Semivariograma omnidirecional das discrep?ncias/Envelope de Monte Carlo
-  ########################################################################
+  ### Omnidirecional semivariogram of the discrepancies/ Monte Carlo Envelope
+ 
   
-  M <- (0.25*dist.max) #Semivariograma das discrep?ncias para dist?ncia de M m.
+  M <- (0.25*dist.max) 
   
-  windows(8,6,title="Semivariograma Omnidirecional")
+  windows(8,6,title="Omnidirecional semivariogram")
   par(mfrow=c(1,1), family="serif")
   vario.emp.1 <- variog(dados1,max.dist= M, direction="omnidirectional")
-  plot(vario.emp.1, ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("Semivariograma")) 
+  plot(vario.emp.1, ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariancies (m)", main=("Semivariogram")) 
   abline(var(dados1$data),0, col="gray60", lty=2, lwd=2)
-  legend("topleft","Variância Amostral", col="gray60",lty=2, lwd=2,bty='n')
+  legend("topleft","Amostral Variance", col="gray60",lty=2, lwd=2,bty='n')
   
-  #Envelope de variograma (Simula??o Monte Carlo)
+  #Envelope de variograma (Monte Carlo Simulation)
   vario.env <- variog.mc.env(dados1, obj.v=vario.emp.1)
-  plot(vario.emp.1, env=vario.env,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariâncias (m)", main=("Semivariograma das Discrepncias")) 
+  plot(vario.emp.1, env=vario.env,ylim=c(0,escala.y),xlab="Distâncias (m)",ylab="Semivariancies (m)", main=("Semivariogram")) 
   abline(var(dados1$data),0, col="gray60", lty=2, lwd=2)
   legend("topleft","Variância Amostral", col="gray60",lty=2, lwd=2,bty='n')
   
   #Exportando informa??es:
-  sink("Resultados.txt", type="output", append=T)
-  cat(" Resultados do cálculo do Semivariograma:","\n",
+  sink("Results.txt", type="output", append=T)
+  cat(" Results of the Semivariogram:","\n",
       "------------------------------------------------------","\n",
       vario.emp.1$n.data, "observações"    ,"\n",
-      "Distâncias:"      , vario.emp.1$u  ,"\n",
-      "Semivariâncias:"  ,vario.emp.1$v  ,"\n",
-      "Número de pares em cada lote:"     ,vario.emp.1$n  ,"\n",
-      "Desvio padrãoo de cada lote:"  ,vario.emp.1$sd,"\n",
-      "Distáncia Máxima:"     ,vario.emp.1$max.dist,"\n",
-      "Direção:"         ,vario.emp.1$direction  ,"\n",
+      "Distances:"      , vario.emp.1$u  ,"\n",
+      "Semivariances:"  ,vario.emp.1$v  ,"\n",
+      "Number of pairs:"     ,vario.emp.1$n  ,"\n",
+      "Square Deviation:"  ,vario.emp.1$sd,"\n",
+      "Max Distance:"     ,vario.emp.1$max.dist,"\n",
+      "Direction:"         ,vario.emp.1$direction  ,"\n",
       "------------------------------------------------------","\n",
       fill=F)
   sink()
-  shell.exec("Resultados.txt")
+  shell.exec("Results.txt")
   
   
-  ######################################################################
-  #Carregar Fun??es 
-  ######################################################################
+  ### Functions
   
-  #Função para calcular Incerteza
+  #### Uncertainty Function
   theta <- function(x){(sqrt((sd(x)^2)+(mean(x)^2)))}
   
-  #Função para calcular RMSE (dividido por n)
+  ####  RMSE
   theta1 <- function(x){(sqrt((sum(x^2))/length(x)))}
   
-  #Função para calcular Incerteza TCL
+  #### TCL
   theta2 <- function(x,y){(sqrt(((sd(x)^2)*y)+(mean(x)^2)))}
   
-  #Função para calcular Incerteza Robusta
+  #### Robust Uncertainty
   theta3 <- function(x){(sqrt((mad(x)^2)+(median(x)^2)))}
   
   
-  ######################################################################
-  ######################## Amostra Independente ########################
-  ######################################################################
+  ## Independent Sample
   
   
-  ######################################################################
-  #An?lise da Normalidade
-  ######################################################################
+  ### Normality
   
   par(mfrow=c(1,1), family="serif")
   qqnorm(dados$dz, xlab="Quantis Teóricos", ylab= "Quantis Amostrados", main=" Normal Q-Q Plot")
@@ -474,57 +467,53 @@
   shap <- shapiro.test(dados$dz)
   ks.test(dados$dz,"pnorm", mean(dados$dz), sd(dados$dz))
   ks <- ks.test(dados$dz,"pnorm", mean(dados$dz), sd(dados$dz))
- # "Teste Shapiro-Wilk "        ,"\n",
- # "p-value: "         ,shap$p.value   ,"\n",
-#  "Normal: "         ,(shap$p.value>0.05),"\n"
-#  #Exportando informa??es:
-  sink("Resultados.txt", type="output", append=T)
+
+  sink("Results.txt", type="output", append=T)
   
-  cat(" An?lise da Normalidade da Amostra","\n",
+  cat(" Normality of the sample ","\n",
       "Tamanho da Amostra: ",n,"\n",
       "------------------------------------------------------","\n",
-      "\n Teste Kolmogorov-Smirnov "        ,"\n",
+      "\n Kolmogorov-Smirnov "        ,"\n",
       "p-value: "         ,ks$p.value   ,"\n",
       "Normal: "         ,(ks$p.value>0.05),"\n",
-      "\np-valeu > 0.05, amostra ? normal ao n?vel de signific?ncia de 5%","\n",
+      "\np-valeu > 0.05, The sample is normal","\n",
       "------------------------------------------------------","\n",
       fill=F)
   sink()
-  shell.exec("Resultados.txt")
+  shell.exec("Results.txt")
   
-  ######################################################################
-  #Amostra normal e sem Outliers
-  #####################################################################
-
-  #Verifica??o
-  tol <- 0.1 #10 cent?metros
+  ### Normal Sample without Outliers
+  
+  ### Verification
+  tol <- 0.1 
   abs((1.96*sd(dados$dz)-quantile(dados$dz,0.95))) < tol
   abs((mean(dados$dz)-median(dados$dz))) < tol
   abs((sd(dados$dz)- quantile(dados$dz,0.683))) < tol
   
-  #c?lculo das estat?sticas
+  ### Statistics 
   ivt = theta(dados$dz)
   rms = theta1(dados$dz)
 
-  #N?mero de amostras para estimar o IC por bootstrap
-  amostra=5000
+  ### Number of samples to estimate the CL with bootstrap
   
-  #Boott - Bootstrap-t Confidence Limits
+  sample=5000
+  
+  ### Boott - Bootstrap-t Confidence Limits
   results.boot <- boott(dados$dz,theta, nboott=amostra,VS=FALSE,perc=c(0.025,0.975))
   results.boot1 <- boott(dados$dz,theta1, nboott=amostra,VS=FALSE,perc=c(0.025,0.975))
  
-  #Nonparametric BCa Confidence Limits
+  ### Nonparametric BCa Confidence Limits
   results.bca <- bcanon(dados$dz, amostra, theta,alpha=c(0.025, 0.975))
   results.bca1 <- bcanon(dados$dz, amostra, theta1,alpha=c(0.025, 0.975))
  
-  #Intervalo de confian?a baseado no qui-quadrado para RMSE.
+  ### CI for RMSE
   results.rms <- ci.rmsea(rms,length(dados$dz),length(dados$dz),conf.level = 0.95, alpha.lower = NULL, alpha.upper = NULL)
   
-  #Exportando informa??es:
-  sink("Resultados.txt", type="output", append=T)
+  ### Exporting the information
+  sink("Results.txt", type="output", append=T)
   
-  cat(" Incerteza Vertical \n Amostra Independente, Normal e sem Outliers","\n",
-      "\n Intervalo de Confian?a de 95%","\n",
+  cat(" Vertical Uncertainty \n Independence Sample, Normal e and without Outliers","\n",
+      "\n CI  95%","\n",
       "------------------------------------------------------","\n",
       "Incerteza (m): "         ,round(ivt,3)   ,"\n",
       "IC bootstrap-t (m): "         ,"[",round(results.boot$confpoints[1,1],3),
@@ -541,15 +530,12 @@
       "------------------------------------------------------","\n",
       fill=F)
   sink()
-  shell.exec("Resultados.txt")
+  shell.exec("Results.txt")
   
-  ######################################################################
-  #Amostra n?o normal: Aplica??o do TCL ou abordagem robusta
-  #####################################################################
-  
-  #Aplica??o do TCL - Teorema Central do Limite
+  ### Non-Normal Sample
+  ###  TCL
 
-  #Particionamento em torno dos medoids - funcao PAM {cluster}
+  ### Particionamento em torno dos medoids - funcao PAM {cluster}
 
   #N?mero m?dio de pontos por cluster 
   Tamanho_amostral = 4
@@ -579,7 +565,7 @@
          col= 2, pch=16,bty="o")
   par(mfrow=c(1,1), family="serif")
   
-  #An?lise da normalidade da nova amostra
+  # An?lise da normalidade da nova amostra
   shap1 <- shapiro.test(TCL$`dados$dz`)
   ks1 <- ks.test(TCL$`dados$dz`,"pnorm", mean(TCL$`dados$dz`), sd(TCL$`dados$dz`))
   
