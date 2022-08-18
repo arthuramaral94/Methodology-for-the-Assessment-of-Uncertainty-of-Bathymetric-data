@@ -535,7 +535,7 @@
   ### Non-Normal Sample
   ###  TCL
 
-  ### Particionamento em torno dos medoids - funcao PAM {cluster}
+  ### Particionamento  - funcao PAM {cluster}
 
   #N?mero m?dio de pontos por cluster 
   Tamanho_amostral = 4
