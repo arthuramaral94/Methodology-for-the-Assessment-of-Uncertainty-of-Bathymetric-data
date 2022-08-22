@@ -535,102 +535,112 @@
   ### Non-Normal Sample
   ###  TCL
 
-  ### Particionamento  - funcao PAM {cluster}
+  ### Partitioning - PAM function {cluster}
 
-  #N?mero m?dio de pontos por cluster 
+  ### Average number of points per cluster 
+  
   Tamanho_amostral = 4
   
-  #N?mero de clusters
+  ### Number of clusters
+  
   k= round((length(dados$dz))/Tamanho_amostral, 0) 
  
   grupos <- pam(dados[,c(1,2)],k=k,metric = "euclidean", stand = TRUE)
 
-  #Agrupa as amostras por ind?ce e calcula a m?dia de cada uma
+  ### Group the samples by index and calculate the average of each
+  
   TCL <- aggregate(dados$dz~grupos$clustering, FUN = mean)
   
-  #PLota os agrupamentos
+  ### Plot the clusters
+  
   windows(10,5)
   par(mfrow=c(1,2), family="serif")
   plot(dados$X,dados$Y,xlab=" E (m)", ylab="N (m)", col=grupos$clustering, 
-       main="Agrupamento k-med?ides")
+       main="Grouping")
   points(grupos$medoids, pch=16, col=25)
-  legend("bottom", inset=.05, legend= "Centr?ide", 
+  legend("bottom", inset=.05, legend= "centroid", 
          col= 25, pch=16,bty="o")
   plot(dados$dz~grupos$clustering, xlim=c(0,k+1),
        ylim=c(min(dados$dz-0.1),max(dados$dz+0.1)), xlab="Grupos", 
-       ylab="Discrep?ncias (m)", xaxt="n", main="Distribui??o dos Agrupamentos")
-  axis(1,at=seq(1,k, by=1)) #adiciona o eixo X
+       ylab="Discrep?ncias (m)", xaxt="n", main="Distribution of Groupings")
+  axis(1,at=seq(1,k, by=1)) # add the x axis
   points(TCL, col=2,pch=16)
-  legend("bottom",inset=.05, legend= "M?dia do Cluster", 
+  legend("bottom",inset=.05, legend= "Cluster Average", 
          col= 2, pch=16,bty="o")
   par(mfrow=c(1,1), family="serif")
   
-  # An?lise da normalidade da nova amostra
+  ### Analysis of the normality of the new sample
+  
   shap1 <- shapiro.test(TCL$`dados$dz`)
   ks1 <- ks.test(TCL$`dados$dz`,"pnorm", mean(TCL$`dados$dz`), sd(TCL$`dados$dz`))
   
-  windows(8,6,title="An?lise Explorat?ria")
+  windows(8,6,title="Exploratory Analysis")
   par(mfrow=c(2,2), family="serif")
-  hist(TCL$`dados$dz`, xlab="M?dia das Discrep?ncias (m)", ylab= "Frequ?ncia", main=" Histograma")
+  hist(TCL$`dados$dz`, xlab="Average of Discrepancies (m)", ylab= "Frequency", main="Histogram")
   rug(jitter(TCL$`dados$dz`))
-  plot(density(TCL$`dados$dz`), xlab="M?dia das Discrep?ncias (m)", ylab= "Frequ?ncia", main=" Densidade")
-  boxplot(TCL$`dados$dz`, xlab="dZ", ylab= "M?dia das Discrep?ncias (m)", main="Boxplot")
-  qqnorm(TCL$`dados$dz`, xlab="Quantis Te?ricos", ylab= "Quantis Amostrados", main=" Normal Q-Q Plot")
+  plot(density(TCL$`dados$dz`), xlab="Average of Discrepancies (m)", ylab= "Frequency", main="Density")
+  boxplot(TCL$`dados$dz`, xlab="dZ", ylab= "Average of Discrepancies (m)", main="Boxplot")
+  qqnorm(TCL$`dados$dz`, xlab="Theoretical Quantiles", ylab= "Sampled Quantities", main="Normal Q-Q Plot")
   qqline(TCL$`dados$dz`,lty=2, col='red')
   par(mfrow=c(1,1), family="serif")
 
-  #Exportando informa??es:
+  ### Exporting information:
+  
   sink("Resultados.txt", type="output", append=T)
   
-  cat(" Teorema Centra do Limite (TCL)","\n",
+  cat("Central Limit Theorem (CLT)","\n",
       "------------------------------------------------------","\n",
-      "Tamanho da Amostra original: ",length(dados$dz)   ,"\n",
-      "N?mero de Agrupamentos: "         ,k   ,"\n",
-      "Tamanho Amostral Definido: "         ,Tamanho_amostral   ,"\n",
-      "Tamanho Amostral M?dio dos Agrupamentos: " ,round(mean(grupos$clusinfo[,1]),3)  ,"\n\n",
-      "M?dia TCL (m): "         ,round(mean(TCL$`dados$dz`),3)   ,"\n",
-      "vari?ncia TCL: "         ,round(var(TCL$`dados$dz`),3)   ,"\n\n",
-      "Teste Shapiro-Wilk (m?) "        ,"\n",
+      "Original Sample Size: ",length(dados$dz)   ,"\n",
+      "Number of Groupings: "         ,k   ,"\n",
+      "Defined Sample Size: "         ,Tamanho_amostral   ,"\n",
+      "Average Sample Size of Clusters: " ,round(mean(grupos$clusinfo[,1]),3)  ,"\n\n",
+      "CLT average (m): "         ,round(mean(TCL$`dados$dz`),3)   ,"\n",
+      "CLT variance: "         ,round(var(TCL$`dados$dz`),3)   ,"\n\n",
+      "Shapiro-Wilk Test (m?) "        ,"\n",
       "p-value: "         ,shap1$p.value   ,"\n",
       "Normal: "         ,(shap1$p.value>0.05),"\n",
-      "\n Teste Kolmogorov-Smirnov "        ,"\n",
+      "\n Kolmogorov-Smirnov test"        ,"\n",
       "p-value: "         ,ks1$p.value   ,"\n",
       "Normal: "         ,(ks1$p.value>0.05),"\n",
-      "\np-valeu > 0.05, amostra ? normal ao n?vel de signific?ncia de 5%","\n",
+      "\np-valeu > 0.05, sample is normal at 5% significance level","\n",
       "------------------------------------------------------","\n",
       fill=F)
   sink()
   shell.exec("Resultados.txt")
   
-  ######################################################################
-  #Amostra obtida pelo TCL: normal e sem Outliers
-  #####################################################################
+  # Sample obtained by CLT: normal and without outliers
   
-  #Verifica??o
-  tol <- 0.1 #10 cent?metros
+  ### Verification
+  
+  tol <- 0.1 # 10 centimeters
   abs ((1.96*sd(TCL$`dados$dz`)-quantile(TCL$`dados$dz`,0.95))) < tol
   abs((mean(TCL$`dados$dz`)-median(TCL$`dados$dz`))) < tol
   abs((sd(TCL$`dados$dz`)- quantile(TCL$`dados$dz`,0.683))) < tol
 
-  #C?lculo das estat?sticas
+  ### Calculation of statistics
+  
   ivt1 = theta2(TCL$`dados$dz`,mean(grupos$clusinfo[,1]))
  
-  #N?mero de amostras para estimar o IC por bootstrap
+  ### Number of samples to estimate CI by bootstrap
+  
   amostra=5000
   
-  #Boott - Bootstrap-t Confidence Limits
+  ### Boott - Bootstrap-t Confidence Limits
+  
   results.boot2 <- boott(TCL$`dados$dz`,theta2, mean(grupos$clusinfo[,1]), nboott=amostra,VS=FALSE,perc=c(0.025,0.975))
   
-  #Nonparametric BCa Confidence Limits
+  ### Nonparametric BCa Confidence Limits
+  
   results.bca2 <- bcanon(TCL$`dados$dz`, amostra, theta2 ,mean(grupos$clusinfo[,1]), alpha=c(0.025, 0.975))
   
-  #Exportando informa??es:
+  ### Exporting information:
+  
   sink("Resultados.txt", type="output", append=T)
   
-  cat(" Incerteza Vertical \n Amostra Independente, Normal e sem Outliers\n TCL","\n",
-      "\n Intervalo de Confian?a de 95%","\n",
+  cat("Vertical Uncertainty \n Independent, Normal and No Outliers Sample\n CLT","\n",
+      "\n Confidence Interval of 95%","\n",
       "------------------------------------------------------","\n",
-      "Incerteza (m): "         ,round(ivt1,3)   ,"\n",
+      "Uncertainty (m): "         ,round(ivt1,3)   ,"\n",
       "IC bootstrap-t (m): "         ,"[",round(results.boot2$confpoints[1,1],3),
       ";",round(results.boot2$confpoints[1,2],3),"]","\n",
       "IC BCa (95%): "         ,"[",round(results.bca2$confpoints[1,2],3),
@@ -640,29 +650,31 @@
   sink()
   shell.exec("Resultados.txt")
   
-  #####################################################################
-  #Abordagem Robusta
-  #####################################################################
+  # Robust Approach
   
-  #C?lculo das estat?sticas
+  ### Calculation of statistics
+  
   ivt2 = theta3(dados$dz)
   
-  #N?mero de amostras para estimar o IC por bootstrap
+  ### Number of samples to estimate CI by bootstrap  
+  
   amostra1=5000
   
-  #Boott - Bootstrap-t Confidence Limits
+  ### Boott - Bootstrap-t Confidence Limits
+  
   results.boot3 <- boott(dados$dz,theta3, nboott=amostra1,VS=FALSE,perc=c(0.025,0.975))
   
-  #Nonparametric BCa Confidence Limits
+  ### Nonparametric BCa Confidence Limits
   results.bca3 <- bcanon(dados$dz, amostra1, theta3,alpha=c(0.025, 0.975))
   
-  #Exportando informa??es:
+  ### Exporting information:
+  
   sink("Resultados.txt", type="output", append=T)
   
-  cat(" Incerteza Vertical \n Amostra Independente e N?o Normal\n Abordagem Robusta","\n",
-      "\n Intervalo de Confian?a de 95%","\n",
+  cat("Vertical Uncertainty \n Independent and Non-Normal Sample\n Robust Approach","\n",
+      "\n Confidence Interval of 95%","\n",
       "------------------------------------------------------","\n",
-      "Incerteza Robusta (m): "         ,round(ivt2,3)   ,"\n",
+      "Robust uncertainty (m): "         ,round(ivt2,3)   ,"\n",
       "IC bootstrap-t (m): "         ,"[",round(results.boot3$confpoints[1,1],3),
       ";",round(results.boot3$confpoints[1,2],3),"]","\n",
       "IC BCa (m): "         ,"[",round(results.bca3$confpoints[1,2],3),
@@ -675,31 +687,32 @@
       fill=F)
   sink()
   shell.exec("Resultados.txt")
-
   
-  ######################################################################
-  ######################### Amostra dependente #########################
-  ######################################################################
-
-  #####################################################################
-  #Block Bootstrap: Gerar IC com 95%
-  #####################################################################
+  # Dependent sample
   
-  #Obtendo os dados
-  #Carregar dados sem outliers
+  ## Block Bootstrap: Gerar IC com 95%
+  
+  ### Getting the data
+  
+  ### Load data without outliers
+  
   dados <- read.table("dados_semout_boxplot.txt", header=T, dec=",")
   coordinates(dados) <- c("X", "Y")
   
-  #C?lculo das estat?sticas
+  ### Calculation of statistics
+  
   ivt3 = theta(dados$dz)
   rms1 = theta1(dados$dz)
   ivt_robs = theta3(dados$dz)
   
-  #Gerar blocos com diagonal de tamanho pre-defindo
-  #sugest?o: Alcance obtido da an?lise Geoestat?stica
+  ### Generate blocks with a predefined diagonal size
+  
+  ### suggestion: Range obtained from Geostatistical analysis
+  
   tamanho <- 200
   
-  # data.frame
+  ### data.frame
+  
   #data(dados$dz)
   #coordinates(dados$dz) <- ~x+y
   #gridded(dados$dz) <- TRUE
@@ -709,85 +722,92 @@
   #coordinates(dados) <- ~x+y
   #proj4string(dados) <- CRS("+init=epsg:28992")
   
-  #Delimitar o numero e localização de cada bloco
+  ### Delimit the number and location of each block
+  
   Bloco <- makegrid(bbox(dados), cellsize = (tamanho*sqrt(2)), pretty = FALSE)
   coordinates(Bloco) <- c("x1","x2")
   gridded(Bloco) <- TRUE
   Bloco <- as.SpatialPolygons.GridTopology(Bloco@grid)
-  plot(Bloco)     #Plotando os Blocos
-  points(dados) #Plotando os dados originais
+  plot(Bloco)     # Plotting the Blocks
+  points(dados) # Plotting the original data
   
-  #Extrair o numero do Bloco onde cada ponto esta sobrepondo
+  ### Extract the Block number where each point is overlapping
+  
   ptsInBloco <- as.numeric(gIntersects(dados, Bloco, byid=TRUE, 
-                                       returnDense=FALSE, checkValidity=TRUE))  #Todos que tem intersecao para cada buffer
+                                       returnDense=FALSE, checkValidity=TRUE))  # All that intersect for each buffer
   
-  #N?mero de replica??es Bootstrap
+  ### Number of Bootstrap replications
+  
   n_vezes <- 500  
   
   tab_boot <- tab_boot_dz <- NULL 
   
   for (i in 1:n_vezes)   
   {
-    #PRIMEIRO - sorteio do Bloco
+    # FIRST - Block draw
     Grid <- sample(unique(ptsInBloco),dim(dados)[1], replace = TRUE)
-    #SEGUNDO - sorteio de um ponto dentro de cada Bloco selecionado anteriormente
-    pontos <- (as.numeric(lapply(Grid,function(x) sample(which(ptsInBloco==x),1))))  #Os pontos repetidos sao contabilizados apenas uma vez
+    # SECOND - drawing a point within each Block selected previously
+    pontos <- (as.numeric(lapply(Grid,function(x) sample(which(ptsInBloco==x),1))))  # Repeated points are counted only once
     tab_boot <- rbind(tab_boot,(pontos))
     tab_boot_dz <- rbind(tab_boot_dz,dados@data$dz[pontos])
   }
   
-  #Converter os dados para data.frame
+  ### Convert data to data.frame
+  
   tab_boot <- as.data.frame(tab_boot)
   tab_boot_dz <- as.data.frame(tab_boot_dz)
   
- 
-  #Gerar um novo conjunto de dados apos o block boostrap
+  ### Generate a new dataset after the bootstrap block
+  
   dados_novos_ivt <- apply(tab_boot_dz,1,theta) 
   dados_novos_rms <- apply(tab_boot_dz,1,theta1) 
   dados_novos_robs <- apply(tab_boot_dz,1,theta3) 
   
-  #Intervalos de confian?a block bootstrap
+  ### Block bootstrap confidence intervals
+  
   IC_ivt <- quantile(dados_novos_ivt,c(0.025, 0.975)) 
   IC_rms <- quantile(dados_novos_rms,c(0.025, 0.975)) 
   IC_robs <- quantile(dados_novos_robs,c(0.025, 0.975)) 
   
-  #vi?s
+  ### Bias
+  
   vies_ivt <- ivt3 - median(dados_novos_ivt)
   vies_rms <- rms1 - median(dados_novos_rms)
   vies_robs <- ivt_robs - median(dados_novos_robs)
   
   windows(8,8,title="Gráficos para análise exploratória")
   par(mfrow=c(3,2), family="serif")
-  hist(dados_novos_ivt, xlab="Incerteza (m)", ylab= "Frequência", main=" Histograma (bootstrap)")
-  qqnorm(dados_novos_ivt, xlab="Quantis Te?ricos", ylab= "Quantis Amostrados", main=" Normal Q-Q Plot (bootstrap)")
+  hist(dados_novos_ivt, xlab="Uncertainty (m)", ylab= "Frequency", main="Histogram (bootstrap)")
+  qqnorm(dados_novos_ivt, xlab="Theoretical Quantiles", ylab= "Sampled Quantities", main=" Normal Q-Q Plot (bootstrap)")
   qqline(dados_novos_ivt,lty=2, col='red')
-  hist(dados_novos_rms, xlab="RMSE (m)", ylab= "Frequência", main=" Histograma (bootstrap)")
-  qqnorm(dados_novos_rms, xlab="Quantis Te?ricos", ylab= "Quantis Amostrados", main=" Normal Q-Q Plot (bootstrap)")
+  hist(dados_novos_rms, xlab="RMSE (m)", ylab= "Frequency", main=" Histogram (bootstrap)")
+  qqnorm(dados_novos_rms, xlab="Theoretical Quantiles", ylab= "Sampled Quantities", main=" Normal Q-Q Plot (bootstrap)")
   qqline(dados_novos_rms,lty=2, col='red')
-  hist(dados_novos_robs, xlab="Incerteza Robusta (m)", ylab= "Frequência", main=" Histograma (bootstrap)")
-  qqnorm(dados_novos_robs, xlab="Quantis Teóricos", ylab= "Quantis Amostrados", main=" Normal Q-Q Plot (bootstrap)")
+  hist(dados_novos_robs, xlab="Incerteza Robusta (m)", ylab= "Frequency", main=" Histogram (bootstrap)")
+  qqnorm(dados_novos_robs, xlab="Theoretical Quantiles", ylab= "Sampled Quantities", main=" Normal Q-Q Plot (bootstrap)")
   qqline(dados_novos_robs,lty=2, col='red')
   par(mfrow=c(1,1), family="serif")
 
-  #Exportando informa??es:
+  ### Exporting information:
+  
   sink("Resultados.txt", type="output", append=T)
   
-  cat(" Incerteza Vertical \n Amostra Dependente - Bloco Bootstrap","\n",
-      "N?mero de replica??es: " ,n_vezes,"\n",
-      "Tamanho do lado do Bloco (m): " ,round (tamanho*sqrt(2),3),"\n",
-      "\n Intervalo de Confian?a de 95%","\n",
+  cat("Vertical Uncertainty \n Dependent Sample - Bootstrap Block","\n",
+      "Number of replicas: " ,n_vezes,"\n",
+      "Block side size (m): " ,round (tamanho*sqrt(2),3),"\n",
+      "\n Confidence Interval of 95%","\n",
       "------------------------------------------------------","\n",
-      "Incerteza (m): "         ,round(ivt3,3)   ,"\n",
+      "Uncertainty (m): "         ,round(ivt3,3)   ,"\n",
       "IC (m): "         ,"[",round(IC_ivt[1],3),";",round(IC_ivt[2],3),"]","\n",
-      "Vi?s Bootstrap (m): "         ,round(vies_ivt,3)   ,"\n",
+      "Bootstrap bias (m): "         ,round(vies_ivt,3)   ,"\n",
       
       "\n RMSE (m): "         ,round(rms1,3)   ,"\n",
       "IC (m): "         ,"[",round(IC_rms[1],3),";",round(IC_rms[2],3),"]","\n",
-      "Vi?s Bootstrap (m): "         ,round(vies_rms,3)   ,"\n",
+      "Bootstrap bias (m): "         ,round(vies_rms,3)   ,"\n",
 
-      "\n Incerteza Robusta (m): "         ,round(ivt_robs,3)   ,"\n",
+      "\n Robust uncertainty(m): "         ,round(ivt_robs,3)   ,"\n",
       "IC (m): "         ,"[",round(IC_robs[1],3),";",round(IC_robs[2],3),"]","\n",
-      "Vi?s Bootstrap (m): "         ,round(vies_robs,3)   ,"\n",
+      "Bootstrap bias (m): "         ,round(vies_robs,3)   ,"\n",
       "------------------------------------------------------","\n",
       fill=F)
   sink()
